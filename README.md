@@ -42,7 +42,7 @@ Esse comando já compila e carrega o projeto para ser usado no `iex`, podendo us
 
 ```elixir
 SumList.hello
-#+> :world
+#=> :world
 ```
 
 A definição de uma função tem a notação:
@@ -51,4 +51,115 @@ A definição de uma função tem a notação:
 def hello do
   :world
 end
+```
+
+### Somando todos elementos de uma lista recursivamente
+
+Vamos criar uma função chamada `sum` que recebe como argumentos uma lista e um acumulador. Com o pattern matching, vamos definir qual função rodar. Vou primeiro criar uma função que recebe uma lista vazia `[]` e um acumulador `acc`.
+
+```elixir
+defmodule SumList do
+  def sum([], acc) do
+    0
+  end
+end
+```
+
+No `iex`, rodar a função passando como argumentos uma lista vazia `[]` e um número qualquer `0`.
+
+```elixir
+SumList.sum([], 0)
+#=> 0
+```
+
+Mas se passarmos uma lista contendo números
+
+```elixir
+SumList.sum([1,2,3], 0)
+#=> ** (FunctionClauseError) no function clause matching in SumList.sum/2
+```
+
+Vai retornar um erro de pattern matching, pois a função espera receber uma lista fazia.
+
+Vamos criar uma outra função com o mesmo nome `sum`, mas agora vou receber uma lista com elementos
+
+```elixir
+def sum([head | tail], acc) do
+  head
+end
+```
+
+Vendo no `iex`
+
+```elixir
+SumList.sum([1,2,3], 0)
+#=> 1
+```
+
+Ou podemos atribuir o pattern matching a uma variável
+
+```elixir
+def sum([head | tail] = list, acc) do
+  list
+end
+```
+
+Vendo no `iex`
+
+```elixir
+SumList.sum([5,2,3], 0)
+#=> [5, 2, 3]
+```
+
+Fazendo a função
+
+```elixir
+defmodule SumList do
+  def sum([], acc) do
+    acc
+  end
+
+  def sum([head | tail], acc) do
+    acc = acc + head
+    sum(tail, acc)
+  end
+end
+```
+
+O teste de mesa seria:
+Ao chamar a função `sum([1,2,3], 0)`, a recursão será:
+
+- 1a execução: [1,2,3] hd: 1, tl: [2,3], 0 -> acc = 0 + 1, sum([2,3], 1)
+- 2a execução: [2,3] hd: 1, tl: [3], 1 -> acc = 1 + 2, sum([3], 3)
+- 3a execução: [3] hd: 3, tl: [], 3 -> acc = 3 + 3, sum([], 3)
+- 4a execução: [] acc = 6
+
+E para não dar errado quando passar um número qualquer de `acc` quando passar uma lista vazia, vamos deixar ambas funções `sum` privadas e criar uma função `call` pública que vai acessar essas funções dentro do próprio módulo.
+
+```elixir
+defmodule SumList do
+  def call(list), do: sum(list, 0)
+
+  defp sum([], acc), do: acc
+
+  defp sum([head | tail], acc) do
+    acc = acc + head
+    sum(tail, acc)
+  end
+end
+```
+
+Então, se tentar chamar o método `sum`, já não vai dar mais certo
+
+```elixir
+SumList.sum([5,2,3])
+#=> ** (UndefinedFunctionError) function SumList.sum/1 is undefined or private
+#=>    (sum_list 0.1.0) SumList.sum([5, 2, 3])
+```
+
+E rodando a função:
+
+```elixir
+SumList.call([5,2,3])
+#=> 10
 ```
