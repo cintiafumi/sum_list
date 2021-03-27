@@ -265,3 +265,76 @@ defmodule SumListTest do
   end
 end
 ```
+
+### Módulo Enum
+
+Podemos iterar sobre listas, maps e ranges usando [Enum](https://hexdocs.pm/elixir/Enum.html).
+
+A soma de uma lista usando o módulo [Enum.sum](https://hexdocs.pm/elixir/Enum.html#sum/1)
+
+```elixir
+  def call_enum(list), do: Enum.sum(list)
+```
+
+Podemos também achar o valor máximo da lista com [Enum.max](https://hexdocs.pm/elixir/Enum.html#max/1)
+
+```elixir
+  def call_enum(list), do: Enum.max(list)
+```
+
+```elixir
+SumList.call_enum([1,2,3,4])
+#=> 4
+```
+
+Ou o valor mínimo com [Enum.min](https://hexdocs.pm/elixir/Enum.html#min/1)
+
+```elixir
+  def call_enum(list), do: Enum.min(list)
+```
+
+```elixir
+SumList.call_enum([1,2,3,4])
+#=> 1
+```
+
+Temos também a função [Enum.map](https://hexdocs.pm/elixir/Enum.html#map/2) que é uma função da programação funcional porque a gente passa uma função para uma função, normalmente chamada de _lambda's function_. Dado uma coleção de dados e uma função, o `map` executa essa função em todos os elementos dessa coleção de dados e retorna uma nova lista com os valores alterados.
+
+```elixir
+  def call_enum(list), do: Enum.map(list, fn elem -> elem + 1 end)
+```
+
+```elixir
+SumList.call_enum([1,2,3,4])
+#=> [2, 3, 4, 5]
+```
+
+Ou podemos usar um [Enum.any?](https://hexdocs.pm/elixir/Enum.html#any?/2). Toda função que tem `?` retorna um booleano. Nesse caso, existe algum elemento nessa lista que seja maior do que 5?
+
+```elixir
+  def call_enum(list), do: Enum.any?(list, fn elem -> elem > 5 end)
+```
+
+```elixir
+SumList.call_enum([1,2,3,4])
+#=> false
+SumList.call_enum([1,2,6,4])
+#=> true
+```
+
+Um `Map` também é um `Enumerable`, então podemos usar a função `map`:
+
+```elixir
+Enum.map(%{a: 1, b: 2}, fn x -> x end)
+#=> [a: 1, b: 2]
+
+Enum.map(%{a: 1, b: 2}, fn {k, v} -> {k, v} end)
+#=> [a: 1, b: 2]
+
+Enum.map(%{a: 1, b: 2}, fn {k, v} -> v end)
+#=> warning: variable "k" is unused (if the variable is not meant to be used, prefix it with an underscore)
+#=> [1, 2]
+
+Enum.map(%{a: 1, b: 2}, fn {_k, v} -> v end)
+#=> [1, 2]
+```
