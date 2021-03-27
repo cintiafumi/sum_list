@@ -179,3 +179,89 @@ defmodule SumList do
   end
 end
 ```
+
+### Testes
+
+Abrindo o arquivo de testes `test/sum_list_test.exs`. Podemos deletar o `doctest` pois ele testa todo código que tem na documentação e executa para ver se está funcionando corretamente. Mas como deletamos a documentação, não usaremos essa funcionalidade.
+
+Sempre teremos um arquivo com mesmo nome incluindo `_test.exs` no final. Os arquivos elixir tem extensão `.ex`, enquanto que arquivos de teste são `.exs`. Esse `s` no final significa que é um script. O nome do módulo também é o mesmo nome do módulo com `Test` adicionado no final. O `ExUnit` é a switch de teste.
+
+Todo teste começa com `describe` e só testamos as nossas funções públicas. Coloca o nome da função com a aridade.
+
+```elixir
+defmodule SumListTest do
+  use ExUnit.Case
+
+  describe "call/1" do
+    test "return the sum of a list" do
+      list = [1, 2, 3]
+
+      response = SumList.call(list)
+
+      expected_response = "banana"
+
+      assert response == expected_response
+    end
+  end
+end
+```
+
+Para rodar o teste, é só ir no terminal e rodar:
+
+```bash
+mix test
+```
+
+Nesse caso, retornou um erro:
+
+```bash
+Compiling 1 file (.ex)
+
+  1) test call/1 return the sum of a list (SumListTest)
+     test/sum_list_test.exs:5
+     Assertion with == failed
+     code:  assert response == expected_response
+     left:  6
+     right: "banana"
+     stacktrace:
+       test/sum_list_test.exs:12: (test)
+
+Finished in 0.08 seconds
+1 test, 1 failure
+
+Randomized with seed 529138
+```
+
+Arrumando o teste e deixando até mais simples:
+
+```elixir
+defmodule SumListTest do
+  use ExUnit.Case
+
+  describe "call/1" do
+    test "return the sum of a list" do
+      assert SumList.call([1, 2, 3]) == 6
+    end
+  end
+end
+```
+
+Ou de maneira mais explícita:
+
+```elixir
+defmodule SumListTest do
+  use ExUnit.Case
+
+  describe "call/1" do
+    test "return the sum of a list" do
+      list = [1, 2, 3]
+
+      response = SumList.call(list)
+
+      expected_response = 6
+
+      assert response == expected_response
+    end
+  end
+end
+```
